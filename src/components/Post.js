@@ -2,7 +2,7 @@ import React from "react";
 
 export default ({ title, body }) => (
   <div className="post">
-    <h1> {title} </h1>
-    <div>{body}</div>
+    <h3 className="header"> {title} </h3>
+    <div className="content">{body + body + body}</div>
   </div>
 );

@@ -1,41 +1,37 @@
 import React, { lazy, Suspense, Component } from "react";
+//import { createCache, createResource } from "react-cache";
 import { Spinner, Post as PostContainer, SearchInput } from "../components";
 
-let data = false;
-let posts = [];
-
-const fetchData = () => {
-  return fetch("https://jsonplaceholder.typicode.com/todos/")
-    .then(response => response.json())
-    .then(json => (data = json));
-};
 const fetchPost = id => {
   return fetch(`https://jsonplaceholder.typicode.com/posts/${id}`)
     .then(response => response.json())
-    .then(json => (posts[id] = json));
+    .then(json => json);
+};
+
+let post = false;
+let posts = [];
+
+const fetchPosts = () => {
+  return fetch("https://jsonplaceholder.typicode.com/posts/")
+    .then(response => response.json())
+    .then(json => (data = json));
 };
 
 const Posts = () => {
   if (!data) {
-    throw fetchData();
+    throw fetchPosts();
   }
 
   return (
-    <ul>
+    <div className="container">
       {data.map((post, i) => (
-        <li key={i}> {post.title} </li>
+        <PostContainer {...post} key={i} />
       ))}
-    </ul>
+    </div>
   );
 };
 const Post = ({ id }) => {
-  console.log(id);
-  const post = posts[id];
-  if (!posts[id]) {
-    throw fetchPost(id);
-  }
-
-  return <PostContainer {...post} />;
+  if (data) return <PostContainer {...post} />;
 };
 
 class App extends Component {
@@ -53,7 +49,7 @@ class App extends Component {
       <div className="App">
         <h1> Memo example</h1>
         <SearchInput onSubmit={this.onSubmit} />
-        <Suspense fallback={<Spinner />} maxDuration={4000}>
+        <Suspense fallback={<Spinner />} maxDuration={1000}>
           {postId && <Post id={postId} />}
         </Suspense>
       </div>
@@ -62,3 +58,11 @@ class App extends Component {
 }
 
 export default App;
+
+//{postId && <Post id={postId} />} <Posts />
+
+/*
+const cache = createCache();
+const PostResource = createResource(fetchPost);
+
+*/
